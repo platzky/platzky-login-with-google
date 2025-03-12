@@ -1,0 +1,34 @@
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+
+<script>
+  function handleCredentialResponse(response) {
+    console.log(response);
+    if (response.credential) {
+      console.log(response.credential);
+      // Send the credential response to the server.
+      fetch('/verify_google_login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          'credential': response.credential
+        })
+      }).then(response => {
+        if (response.ok) {
+          console.log('Credential sent to the server.');
+          window.location.href = '/admin';
+        } else {
+          console.log('Failed to send credential to the server.');
+        }
+      });
+    } else {
+      console.log('No credential in response.');
+    }
+  }
+</script>
+<div id="g_id_onload" data-client_id="{{google_client_id}}" data-callback="handleCredentialResponse">
+</div>
+<div class="g_id_signin" data-type="standard"></div>

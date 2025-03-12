@@ -1,0 +1,1 @@
+from platzky_login_with_google.entrypoint import LoginWithGoogle as LoginWithGoogle
