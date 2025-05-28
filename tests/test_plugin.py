@@ -2,6 +2,7 @@ from unittest.mock import patch, ANY
 from platzky.platzky import create_app_from_config, Config
 from typing import Any, Dict
 
+
 def test_that_plugin_loads_plugin():
     client_id = "google-client-id"
 
@@ -18,9 +19,7 @@ def test_that_plugin_loads_plugin():
                 "plugins": [
                     {
                         "name": "login_with_google",
-                        "config": {
-                            "google_client_id": client_id
-                        },
+                        "config": {"google_client_id": client_id},
                     }
                 ],
             },
@@ -34,10 +33,12 @@ def test_that_plugin_loads_plugin():
     mock_user_info = {
         "sub": "123456789",
         "name": "Test User",
-        "email": "testuser@example.com"
+        "email": "testuser@example.com",
     }
 
-    with patch('google.oauth2.id_token.verify_oauth2_token', return_value=mock_user_info) as mock_verify:
+    with patch(
+        "google.oauth2.id_token.verify_oauth2_token", return_value=mock_user_info
+    ) as mock_verify:
         response = app.post("/verify_google_login", json={"credential": "google-token"})
         assert response.status_code == 200
         assert response.json["status"] == "logged_in"

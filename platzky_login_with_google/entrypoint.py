@@ -1,7 +1,7 @@
 from flask import jsonify, request, session
 from jinja2 import Environment, FileSystemLoader
 
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import Field
 from typing import Any, Dict
 import os.path
 
@@ -10,9 +10,13 @@ from google.auth.transport import requests as google_requests
 
 from platzky.plugin.plugin import PluginBase, PluginBaseConfig, PluginError
 
+
 class LoginWithGoogleConfig(PluginBaseConfig):
     """Configuration for email sending functionality."""
-    google_client_id: str = Field(alias="google_client_id", description="Google client ID")
+
+    google_client_id: str = Field(
+        alias="google_client_id", description="Google client ID"
+    )
 
 
 class LoginWithGoogle(PluginBase[LoginWithGoogleConfig]):
@@ -34,7 +38,9 @@ class LoginWithGoogle(PluginBase[LoginWithGoogleConfig]):
             ValidationError: If configuration is invalid
         """
         try:
-            plugin_config = self.config  # Use the already validated config from __init__
+            plugin_config = (
+                self.config
+            )  # Use the already validated config from __init__
 
             @app.route("/verify_google_login", methods=["POST"])
             def verify_google_login():
@@ -45,7 +51,9 @@ class LoginWithGoogle(PluginBase[LoginWithGoogleConfig]):
                     return jsonify({"error": "Missing token"}), 400
 
                 try:
-                    id_info = id_token.verify_oauth2_token(token, google_requests.Request(), plugin_config.google_client_id)
+                    id_info = id_token.verify_oauth2_token(
+                        token, google_requests.Request(), plugin_config.google_client_id
+                    )
                     session["user"] = id_info
                     return jsonify({"status": "logged_in", "user": id_info})
                 except ValueError as e:
@@ -58,7 +66,9 @@ class LoginWithGoogle(PluginBase[LoginWithGoogleConfig]):
                 login_template = "login_with_google.html"
                 template = env.get_template(login_template)
                 # TODO this should not be template, but rather some interface for "loginMethod" or similar
-                login_with_google = template.render(google_client_id=plugin_config.google_client_id)
+                login_with_google = template.render(
+                    google_client_id=plugin_config.google_client_id
+                )
                 app.add_login_method(login_with_google)
 
             return app
