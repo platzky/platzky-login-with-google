@@ -41,6 +41,7 @@ def test_that_plugin_loads_plugin():
     ) as mock_verify:
         response = app.post("/verify_google_login", json={"credential": "google-token"})
         assert response.status_code == 200
+        assert response.json is not None
         assert response.json["status"] == "logged_in"
         assert response.json["user"] == mock_user_info
         mock_verify.assert_called_once_with("google-token", ANY, client_id)

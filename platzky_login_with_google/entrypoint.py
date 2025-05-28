@@ -24,6 +24,7 @@ class LoginWithGoogle(PluginBase[LoginWithGoogleConfig]):
 
     def __init__(self, config: Dict[str, Any]):
         super().__init__(config)
+        self.config: LoginWithGoogleConfig  # Explicitly set the type of self.config
 
     def process(self, app: Any) -> Any:
         """Initialize the google login plugin.
@@ -38,9 +39,7 @@ class LoginWithGoogle(PluginBase[LoginWithGoogleConfig]):
             ValidationError: If configuration is invalid
         """
         try:
-            plugin_config = (
-                self.config
-            )  # Use the already validated config from __init__
+            plugin_config = self.config
 
             @app.route("/verify_google_login", methods=["POST"])
             def verify_google_login():
@@ -65,7 +64,6 @@ class LoginWithGoogle(PluginBase[LoginWithGoogleConfig]):
             with app.app_context():
                 login_template = "login_with_google.html"
                 template = env.get_template(login_template)
-                # TODO this should not be template, but rather some interface for "loginMethod" or similar
                 login_with_google = template.render(
                     google_client_id=plugin_config.google_client_id
                 )
