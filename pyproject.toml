@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 pydantic = "^2.10.6"
-platzky = "^0.3.1"
+platzky = "^0.3.3"
 
 
 [tool.poetry.group.dev.dependencies]

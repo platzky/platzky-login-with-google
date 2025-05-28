@@ -57,6 +57,7 @@ class LoginWithGoogle(PluginBase[LoginWithGoogleConfig]):
             with app.app_context():
                 login_template = "login_with_google.html"
                 template = env.get_template(login_template)
+                # TODO this should not be template, but rather some interface for "loginMethod" or similar
                 login_with_google = template.render(google_client_id=plugin_config.google_client_id)
                 app.add_login_method(login_with_google)
 
