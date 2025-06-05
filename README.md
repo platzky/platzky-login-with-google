@@ -14,12 +14,11 @@ pip install platzky-login-with-google
 
 ```json
 "plugins": [
-{
-            "name": "platzky-login-with-google",
-            "config": {
-                "google_client_id": "YOUR_CLIENT
-            }
-}
+  {
+  "name": "login_with_google",
+  "config": {
+    "google_client_id": "YOUR_GOOGLE_CLIENT_ID"
+    }
+  }
 ]
-
 ```

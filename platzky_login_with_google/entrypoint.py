@@ -1,5 +1,6 @@
-from flask import jsonify, request, session
+from flask import jsonify, request, render_template_string, session
 from jinja2 import Environment, FileSystemLoader
+from markupsafe import Markup  # Add this import
 
 from pydantic import Field
 from typing import Any, Dict
@@ -22,22 +23,15 @@ class LoginWithGoogleConfig(PluginBaseConfig):
 class LoginWithGoogle(PluginBase[LoginWithGoogleConfig]):
     """Plugin for login with Google."""
 
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: Dict[str, Any] | LoginWithGoogleConfig):
+        # Convert dict to LoginWithGoogleConfig if needed
+        if not isinstance(config, LoginWithGoogleConfig):
+            config = LoginWithGoogleConfig(**config)
         super().__init__(config)
-        self.config: LoginWithGoogleConfig  # Explicitly set the type of self.config
+        self.config: LoginWithGoogleConfig
 
     def process(self, app: Any) -> Any:
-        """Initialize the google login plugin.
-
-        Args:
-            app: The application instance
-
-        Returns:
-            The application instance
-
-        Raises:
-            ValidationError: If configuration is invalid
-        """
+        """Initialize the google login plugin."""
         try:
             plugin_config = self.config
 
@@ -60,13 +54,14 @@ class LoginWithGoogle(PluginBase[LoginWithGoogleConfig]):
 
             template_dir = os.path.dirname(__file__)
             env = Environment(loader=FileSystemLoader(template_dir))
+            login_template = "login_with_google.html"
+            template = env.get_template(login_template)
+
+            def login_with_google():
+                html = template.render(google_client_id=plugin_config.google_client_id)
+                return Markup(html)
 
             with app.app_context():
-                login_template = "login_with_google.html"
-                template = env.get_template(login_template)
-                login_with_google = template.render(
-                    google_client_id=plugin_config.google_client_id
-                )
                 app.add_login_method(login_with_google)
 
             return app
