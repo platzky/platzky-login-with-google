@@ -1,6 +1,6 @@
 from flask import jsonify, request, session
 from jinja2 import Environment, FileSystemLoader
-from markupsafe import Markup  # Add this import
+from markupsafe import Markup
 
 from pydantic import Field
 from typing import Any, Dict
@@ -24,11 +24,16 @@ class LoginWithGoogle(PluginBase[LoginWithGoogleConfig]):
     """Plugin for login with Google."""
 
     def __init__(self, config: Dict[str, Any] | LoginWithGoogleConfig):
-        # Convert dict to LoginWithGoogleConfig if needed
-        if not isinstance(config, LoginWithGoogleConfig):
-            config = LoginWithGoogleConfig(**config)
-        super().__init__(config)
-        self.config: LoginWithGoogleConfig
+        # Handle the config parameter and set self.config
+        if isinstance(config, LoginWithGoogleConfig):
+            self.config = config
+            # Convert LoginWithGoogleConfig to dict for parent class
+            dict_config = config.model_dump()
+            super().__init__(dict_config)
+        else:
+            # config is already a dict
+            self.config = LoginWithGoogleConfig(**config)
+            super().__init__(config)
 
     def process(self, app: Any) -> Any:
         """Initialize the google login plugin."""
