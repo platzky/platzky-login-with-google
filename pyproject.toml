@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "platzky_login_with_google"
-version = "0.1.1"
+version = "0.2.0"
 description = ""
 authors = []
 license = "MIT"
@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 pydantic = "^2.10.6"
-platzky = "^0.3.3"
+platzky = "^0.4.0"
 
 
 [tool.poetry.group.dev.dependencies]
